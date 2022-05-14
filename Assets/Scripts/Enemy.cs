@@ -32,11 +32,21 @@ namespace Verkefni3
 
         private void Update()
         {
+            // hringlaga raycast sem er notað til að tjekka hvort það sé player innan við m_SightRange units 
             m_PlayerInSightRange = Physics.CheckSphere(transform.position, m_SightRange, playerMask);
+            
+            // hringlaga raycast sem er notað til að checka hvort það sé player innan viðð m_AttackRange units
             m_PlayerInAttackRange = Physics.CheckSphere(transform.position, m_AttackRange, playerMask);
-
+            
+            // ógeðslega mikil einföldun á state pattern
+            
+            // ef ég sé ekki player og ég er ekki að gera árás á player, labba ég um svæðið
             if (!m_PlayerInSightRange && !m_PlayerInAttackRange) Patrol();
+            
+            // ef ég sé player en ég er ekki nógu nálægt til að meiða hann, labba ég að playernum
             if (m_PlayerInSightRange && !m_PlayerInAttackRange) Chase();
+            
+            // ef ég bæði sé og er nógu nálagt, þá ræðst ég á playerinn
             if (m_PlayerInSightRange && m_PlayerInAttackRange) Attack();
         }
 
@@ -75,11 +85,14 @@ namespace Verkefni3
 
         private void SetWalkPoint()
         {
+            // velja tvö random hnit innan við -m_WalkpointRange og m_WalkPointRange
             float x = Random.Range(-m_WalkPointRange, m_WalkPointRange);
             float z = Random.Range(-m_WalkPointRange, m_WalkPointRange);
-
+            
+            // segir scriptuni að þetta sé næsti staður
             m_WalkPoint = new Vector3(transform.position.x + x, transform.position.y, transform.position.z + z);
 
+            // auka tjekk til að gá hvort þetta sé ekki örugglega land sem við erum að fara labba á
             if (Physics.Raycast(m_WalkPoint, -transform.up, 2f, groundMask))
             {
                 m_WalkPointSet = true;
@@ -88,23 +101,32 @@ namespace Verkefni3
 
         private void Chase()
         {
+            // líta á og labba að player
             m_Agent.SetDestination(m_Player.position);
             transform.LookAt(m_Player);
         }
 
         private void Attack()
         {
+            // stoppa 
             m_Agent.SetDestination(transform.position);
+            
+            // horfa á player
             transform.LookAt(m_Player);
 
+            // range check
             Vector3 distance = transform.position - m_Player.position;
-
             if (distance.magnitude  <= m_AttackRange + 1)
             {
+                // cooldown svo enemy lemji ekki milljón grilljón sinnum á sekúndu
                 if (!m_AlreadyAttacked)
                 {
-                     m_PlayerComp.ChangeHealth(-10);
+                    // tekur 10 health af player
+                    m_PlayerComp.ChangeHealth(-10);
                     m_AlreadyAttacked = true;
+                    
+                    // resettar cooldownið eftir timeBetweenAttacks sekúndur
+                    // invoke er mjög nice það gerir svona hluti auðveldari. það semsagt kallar á fall eftir x sek
                     Invoke(nameof(ResetAttack), timeBetweenAttacks);
                 }
             }

@@ -13,7 +13,7 @@ namespace Verkefni3
         public TextMeshProUGUI announcementText;
 
         private AudioSource m_AudioSource;
-        private int score = 0;
+        private int m_Score = 0;
 
         private void Start()
         {
@@ -23,8 +23,8 @@ namespace Verkefni3
 
         public void ChangeScore(int amount)
         {
-            score += amount;
-            scoreText.text = score.ToString();
+            m_Score += amount;
+            scoreText.text = m_Score.ToString();
         }
 
         public void PlaySound(AudioClip clip)

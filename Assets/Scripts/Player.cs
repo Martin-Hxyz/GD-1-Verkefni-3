@@ -89,6 +89,7 @@ namespace Verkefni3
 
         private void HandleShot()
         {
+            // býr til kúlu og skýtur henni áfram. Bullet monobehaviorinn sér svo um hit detection og svoleiðis.
             var bulletOrigin = transform.position + transform.forward;
             bulletOrigin.y += 1.5f;
             var bullet = Instantiate(bulletPrefab, bulletOrigin, Quaternion.identity);
