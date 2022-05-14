@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -103,6 +101,7 @@ namespace Verkefni3
             // Þessi kóði á aldrei að keyra ef playerinn er ekki lifandi
             if (!m_Alive) return;
             GameManager.instance.PlaySound(deathSound);
+            Invoke(nameof(GameManager.instance.LoadGameOver), 1.5f);
             Destroy(gameObject);
         }
     }
